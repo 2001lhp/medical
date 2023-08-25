@@ -11,12 +11,20 @@ module.exports = {
   ],
   rules: {
     'prettier/prettier': [
-      'warn',
+      'off',
       {
+        // useTabs：使用tab缩进还是空格缩进，选择false；
+        useTabs: false,
+        // tabWidth：tab是空格的情况下，是几个空格，选择2个
+        tabWidth: 2,
+        // printWidth：当行字符的长度，推荐80，也有人喜欢100或者120
+        printWidth: 100,
+        // singleQuote：使用单引号还是双引号，选择true，使用单引号；
         singleQuote: true,
-        semi: false,
-        printWidth: 80,
+        // trailingComma：在多行输入的尾逗号是否添加，设置为 `none`；
         trailingComma: 'none',
+        // semi：语句末尾是否要加分号，默认值true，选择false表示不加；
+        semi: false,
         endOfLine: 'auto'
       }
     ],
@@ -26,7 +34,8 @@ module.exports = {
         ignores: ['index']
       }
     ],
-    'vue/no-setup-props-destructure': ['off']
+    'vue/no-setup-props-destructure': ['off'],
+    '@typescript-eslint/no-unused-vars': ['off']
   },
   parserOptions: {
     ecmaVersion: 'latest'

@@ -2,8 +2,8 @@
   <div class="home">
     <div class="box">
       <van-button type="primary" @click="store.count++">+</van-button>
-      {{ store.count }}
-      <van-button @click="store.count--">-</van-button>
+      {{ store.count }} * {{ store.doubleCount }}
+      <van-button @click="store.count--">-</van-button><br />
     </div>
   </div>
 </template>
@@ -11,6 +11,7 @@
 import { ref } from 'vue'
 import { useCounterStore } from '@/stores/counter'
 const store = useCounterStore()
+
 </script>
 <style lang="scss" scoped>
 .box {
@@ -19,3 +20,4 @@ const store = useCounterStore()
   background-color: chartreuse;
 }
 </style>
+

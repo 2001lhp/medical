@@ -1,22 +1,28 @@
-import { ref, computed } from 'vue'
+import { ref, } from 'vue'
 import { defineStore } from 'pinia'
+import type { User } from '../types/user'
 
 export const useCounterStore = defineStore(
   'counter',
   () => {
-    const count = ref(0)
-    const doubleCount = computed(() => count.value * 2)
-    function increment() {
-      count.value++
+    // 保存用户信息
+    const user = ref<User>()
+    // 设置用户信息，登录后使用
+    const setUser = (u: User) => {
+      user.value = u
+    }
+    // 删除用户信息, 退出登录/token过期
+    const delUser = () => {
+      user.value = undefined
     }
 
-    return { count, doubleCount, increment }
+    return { user, setUser, delUser }
   },
   {
     persist: {
       key: 'pinia',
       storage: localStorage,
-      paths: ['count']
+      paths: ['user']
     }
   }
 )
