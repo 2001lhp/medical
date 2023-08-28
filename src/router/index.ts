@@ -23,6 +23,9 @@ const router = createRouter({
     }, {
       path: '/enroll',
       component: () => import('../views/Enroll/index.vue')
+    }, {
+      path: '/user',
+      component: () => import('../views/User/index.vue')
     }
   ]
 })

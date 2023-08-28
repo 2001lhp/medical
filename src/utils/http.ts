@@ -32,10 +32,10 @@ http.interceptors.response.use(
     return response.data
   },
   (error) => {
-    // if (error.response.status == 401) {
-    //   store.delUser()
-    //   router.push(`/login?${router.currentRoute.value.fullPath}`)
-    // }
+    if (error.response.status == 401) {
+      store.delUser()
+      router.push(`/login?${router.currentRoute.value.fullPath}`)
+    }
     return Promise.reject(error)
   }
 )

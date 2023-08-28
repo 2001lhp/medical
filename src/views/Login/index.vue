@@ -1,47 +1,79 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
-import { mobileRule, passwordRule } from '@/utils/rules';
+import { mobileRule, passwordRule, codeRule } from '@/utils/rules';
 import { showToast } from 'vant';
-import { loginByPassword } from '../../services/user'
-import { useCounterStore } from '../../stores/counter.ts'
+import { loginByPassword, sendMobileCode, loginByMobile } from '../../services/user'
+import { useCounterStore } from '../../stores/counter'
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter()
+const route = useRoute()
 const store = useCounterStore()
 const mobile = ref('13230000001')
 const password = ref('abc12345')
+const code = ref()
 const checked = ref(false)
 const eyeflag = ref(false)
+const pass = ref(false)
 const onSubmit = () => {
     if (!checked.value) {
         showToast('请勾选我已同意')
     } else {
-        loginByPassword({ mobile: mobile.value, password: password.value }).then(res => {
-            console.log(res)
-            store.user = {
-                id: res.data.id,
-                token: res.data.refreshToken,
-                account: res.data.account,
-                mobile: res.data.mobile,
-                avatar: res.data.avatar
-            }
-            // console.log(store.user)
-        })
+        if (pass.value) {
+            loginByMobile({ mobile: mobile.value, code: code.value }).then(res => {
+                console.log(res)
+                store.user = res.data
+            })
+        } else {
+            loginByPassword({ mobile: mobile.value, password: password.value }).then(res => {
+                // console.log(res)
+                store.user = res.data
+            })
+        }
+        router.push('/user')
     }
+}
+const time = ref(0)
+const codefn = async () => {
+    if (time.value > 0) return
+    // sendMobileCode({ mobile: mobile.value, type: 'login' }).then(res => {
+    //     console.log(res)
+    //     code.value = res.data.code
+    // })
+    let coderes: any = await sendMobileCode({ mobile: mobile.value, type: 'login' })
+    console.log(coderes.data);
+    code.value = coderes.data.code
+    showToast('发送成功')
+    time.value = 60
+    let timer = setInterval(() => {
+        time.value--
+        if (time.value == 0) {
+            clearInterval(timer)
+        }
+    }, 1000)
 }
 </script>
 <template>
     <div class='login'>
         <nav-bar text="注册" @right="$router.push('/enroll')"></nav-bar>
         <div class="login-head">
-            <h3>密码登录</h3>
-            <a href="">
-                <span>短信验证码登录</span>
+            <h3>{{ pass ? '短信验证码登录' : '密码登录' }}</h3>
+            <a href="javascript:;" @click="pass = !pass">
+                <span>{{ pass ? '密码登录' : '短信验证码登录' }}</span>
                 <van-icon name="arrow" />
             </a>
         </div>
         <van-form @submit="onSubmit">
             <van-field v-model="mobile" placeholder="请输入手机号" :rules="mobileRule" />
-            <van-field v-model="password" :type="eyeflag ? 'text' : 'password'" placeholder="请输入密码" :rules="passwordRule">
+            <van-field v-model="password" :type="eyeflag ? 'text' : 'password'" placeholder="请输入密码" :rules="passwordRule"
+                v-if="!pass">
                 <template #button>
                     <svg-icon :name="`login-eye-${eyeflag ? 'on' : 'off'}`" @click="eyeflag = !eyeflag"></svg-icon>
+                </template>
+            </van-field>
+            <van-field v-model="code" placeholder="请输入验证码" :rules="codeRule" v-else>
+                <template #button>
+                    <!-- <svg-icon :name="`login-eye-${eyeflag ? 'on' : 'off'}`" @click="eyeflag = !eyeflag"></svg-icon> -->
+                    <span @click="codefn">{{ time > 0 ? time + 's后再次发送' : '发送验证码' }}</span>
                 </template>
             </van-field>
             <div class="cell">
