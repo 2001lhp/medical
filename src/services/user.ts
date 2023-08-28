@@ -1,5 +1,5 @@
 import request from '../utils/http'
-import type { User } from '../types/user'
+import type { User, UserInfo,Patient } from '../types/user'
 // 密码登录
 interface passConfig {
     mobile: string
@@ -23,4 +23,12 @@ interface codeconfig {
 }
 export const loginByMobile = (data: codeconfig) => {
     return request<User>('/login', 'POST', data)
+}
+
+export const getUserInfo = () => {
+    return request<UserInfo>('/patient/myUser', 'GET')
+}
+
+export const getPatientList = () => {
+    return request<Patient[]>('/patient/mylist')
 }

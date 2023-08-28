@@ -22,14 +22,15 @@ const onSubmit = () => {
             loginByMobile({ mobile: mobile.value, code: code.value }).then(res => {
                 console.log(res)
                 store.user = res.data
+                router.push('/home')
             })
         } else {
             loginByPassword({ mobile: mobile.value, password: password.value }).then(res => {
                 // console.log(res)
                 store.user = res.data
+                router.push('/home')
             })
         }
-        router.push('/user')
     }
 }
 const time = ref(0)
@@ -54,7 +55,7 @@ const codefn = async () => {
 </script>
 <template>
     <div class='login'>
-        <nav-bar text="注册" @right="$router.push('/enroll')"></nav-bar>
+        <nav-bar text="注册" title="" @right="$router.push('/enroll')"></nav-bar>
         <div class="login-head">
             <h3>{{ pass ? '短信验证码登录' : '密码登录' }}</h3>
             <a href="javascript:;" @click="pass = !pass">

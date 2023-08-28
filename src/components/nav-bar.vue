@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
-    text: string
+    text: string,
+    title: string
 }>()
 const emit = defineEmits(['right'])
 const onClickRight = () => {
@@ -9,7 +10,7 @@ const onClickRight = () => {
 </script>
 <template>
     <div class="">
-        <van-nav-bar fixed :right-text="text" left-arrow @click-right="onClickRight" />
+        <van-nav-bar fixed :title="title" :right-text="text" left-arrow @click-right="onClickRight" @click-left="$router.back()"/>
     </div>
 </template>
 <style lang="scss" scoped>
