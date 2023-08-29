@@ -10,7 +10,7 @@ const route = useRoute()
 const store = useCounterStore()
 const info = ref<any>({})
 getUserInfo().then(res => {
-    console.log(res)
+    // console.log(res)
     info.value = res.data
 })
 const tools = [

@@ -28,7 +28,3 @@ export const loginByMobile = (data: codeconfig) => {
 export const getUserInfo = () => {
     return request<UserInfo>('/patient/myUser', 'GET')
 }
-
-export const getPatientList = () => {
-    return request<Patient[]>('/patient/mylist')
-}

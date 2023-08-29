@@ -20,15 +20,15 @@ const onSubmit = () => {
     } else {
         if (pass.value) {
             loginByMobile({ mobile: mobile.value, code: code.value }).then(res => {
-                console.log(res)
+                // console.log(res)
                 store.user = res.data
-                router.push('/home')
+                router.push('/user')
             })
         } else {
             loginByPassword({ mobile: mobile.value, password: password.value }).then(res => {
                 // console.log(res)
                 store.user = res.data
-                router.push('/home')
+                router.push('/user')
             })
         }
     }
@@ -41,7 +41,7 @@ const codefn = async () => {
     //     code.value = res.data.code
     // })
     let coderes: any = await sendMobileCode({ mobile: mobile.value, type: 'login' })
-    console.log(coderes.data);
+    // console.log(coderes.data);
     code.value = coderes.data.code
     showToast('发送成功')
     time.value = 60

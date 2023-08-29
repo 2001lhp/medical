@@ -1,16 +1,28 @@
 <script setup lang="ts">
-defineProps<{
-    text: string,
-    title: string
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter()
+const route = useRoute()
+const prop = defineProps<{
+    text?: string,
+    title?: string,
+    back?: () => void
 }>()
 const emit = defineEmits(['right'])
 const onClickRight = () => {
     emit('right')
 }
+const onClickLeft = () => {
+    if (prop.back) {
+        prop.back()
+    } else {
+        router.back()
+    }
+}
 </script>
 <template>
     <div class="">
-        <van-nav-bar fixed :title="title" :right-text="text" left-arrow @click-right="onClickRight" @click-left="$router.back()"/>
+        <van-nav-bar fixed :title="title" :right-text="text" left-arrow @click-right="onClickRight"
+            @click-left="onClickLeft" />
     </div>
 </template>
 <style lang="scss" scoped>

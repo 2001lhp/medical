@@ -23,11 +23,11 @@ export type UserInfo = OmitUser & {
 }
 
 export type Patient = {
-    id: string
+    id?: string
     name: string
     idCard: string
     defaultFlag: 0 | 1
     gender: 0 | 1
-    genderValue: string
-    age: number
+    genderValue?: string
+    age?: number
 }
