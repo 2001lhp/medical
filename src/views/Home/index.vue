@@ -2,6 +2,9 @@
 import { ref } from 'vue';
 import { getKnowledgePage } from '../../services/home';
 import FollowDoctor from '@/components/FollowDoctor.vue';
+import { ConsultType } from '@/enums/index'
+import { useConsult } from '@/stores/consult'
+const store = useConsult()
 // getKnowledgePage({
 //     type: 'like',
 //     current: 1,
@@ -25,37 +28,51 @@ const active = ref()
         <div class="home-nav">
             <van-row class="nav">
                 <van-col span="8">
-                    <svg-icon name="home-doctor"></svg-icon>
-                    <p>问医生</p>
-                    <div>按科室查问医生</div>
+                    <router-link to="">
+                        <svg-icon name="home-doctor"></svg-icon>
+                        <p>问医生</p>
+                        <div>按科室查问医生</div>
+                    </router-link>
                 </van-col>
                 <van-col span="8">
-                    <svg-icon name="home-graphic"></svg-icon>
-                    <p>急速问诊</p>
-                    <div>20s医生急速回复</div>
+                    <router-link to="fast" @click="store.setType(ConsultType.Fast)">
+                        <svg-icon name="home-graphic"></svg-icon>
+                        <p>急速问诊</p>
+                        <div>20s医生急速回复</div>
+                    </router-link>
                 </van-col>
                 <van-col span="8">
-                    <svg-icon name="home-prescribe"></svg-icon>
-                    <p>开药门诊</p>
-                    <div>线上买药更方便</div>
+                    <router-link to="">
+                        <svg-icon name="home-prescribe"></svg-icon>
+                        <p>开药门诊</p>
+                        <div>线上买药更方便</div>
+                    </router-link>
                 </van-col>
             </van-row>
             <van-row class="navmin">
                 <van-col span="6">
-                    <svg-icon name="home-order"></svg-icon>
-                    <p>药品订单</p>
+                    <router-link to="">
+                        <svg-icon name="home-order"></svg-icon>
+                        <p>药品订单</p>
+                    </router-link>
                 </van-col>
                 <van-col span="6">
-                    <svg-icon name="home-docs"></svg-icon>
-                    <p>健康档案</p>
+                    <router-link to="">
+                        <svg-icon name="home-docs"></svg-icon>
+                        <p>健康档案</p>
+                    </router-link>
                 </van-col>
                 <van-col span="6">
-                    <svg-icon name="home-rp"></svg-icon>
-                    <p>我的处方</p>
+                    <router-link to="">
+                        <svg-icon name="home-rp"></svg-icon>
+                        <p>我的处方</p>
+                    </router-link>
                 </van-col>
                 <van-col span="6">
-                    <svg-icon name="home-find"></svg-icon>
-                    <p>疾病查询</p>
+                    <router-link to="">
+                        <svg-icon name="home-find"></svg-icon>
+                        <p>疾病查询</p>
+                    </router-link>
                 </van-col>
             </van-row>
         </div>
@@ -69,7 +86,7 @@ const active = ref()
         </van-swipe>
         <van-tabs shrink sticky v-model:active="active">
             <van-tab title="关注" name="like">
-                <follow-doctor/>
+                <follow-doctor />
                 <knowledge-list type="like" />
             </van-tab>
             <van-tab title="推荐" name="recommend"><knowledge-list type="recommend" /></van-tab>
@@ -124,10 +141,12 @@ const active = ref()
         padding: 10px 15px 0 15px;
 
         .van-col {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            padding: 10px 0;
+            a {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                padding: 10px 0;
+            }
         }
 
         .nav {

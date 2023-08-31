@@ -1,5 +1,6 @@
 <script setup lang='ts'>
 import { getDoctorPage, followDoctor } from '@/services/home';
+import { useWindowSize } from '@vueuse/core'
 import type { Doctor } from '@/types/consult';
 import { ref } from 'vue';
 import { useFollow } from '@/composable/index'
@@ -10,7 +11,7 @@ const getdata = async () => {
     list.value = res.data.rows
 }
 getdata()
-
+const { width } = useWindowSize()
 const { loading, follow } = useFollow()
 // const loading = ref(false)
 
@@ -31,7 +32,7 @@ const { loading, follow } = useFollow()
             <a href="javascript:;"> 查看更多<i class="van-icon van-icon-arrow" /></a>
         </div>
         <div class="body">
-            <van-swipe :width="150" :show-indicators="false" :loop="false">
+            <van-swipe :width="(150 / 375) * width" :show-indicators="false" :loop="false">
                 <van-swipe-item v-for="item in list" :key="item.id">
                     <div class="box">
                         <van-image round :src="item.avatar" />

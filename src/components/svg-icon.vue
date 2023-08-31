@@ -11,6 +11,9 @@ defineProps<{
   </div>
 </template>
 <style lang='scss' scoped>
+.icon{
+  margin-top: 5px;
+}
 .cp-icon {
   width: 1em;
   height: 1em;

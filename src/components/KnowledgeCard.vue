@@ -4,7 +4,7 @@ import { useFollow } from '@/composable/index'
 defineProps<{
     item: Knowledge
 }>()
-const { loading, follow } = useFollow()
+const { loading, follow } = useFollow('knowledge')
 </script>
 <template>
     <div class='card'>
