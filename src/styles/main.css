@@ -15,7 +15,7 @@
   --cp-price: #EB5757;
 }
 
-.login {
+* {
   --van-button-primary-background: var(--cp-primary);
   --van-button-primary-border-color: var(--cp-primary);
   --van-cell-vertical-padding: 14px;

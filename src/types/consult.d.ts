@@ -107,3 +107,23 @@ export type TopDep = SubDep & {
 }
 
 export type ConsultIllness = Pick<PartialConsult, 'illnessDesc' | 'illnessTime' | 'consultFlag' | 'pictures'>
+
+// 问诊订单预⽀付传参
+
+export type ConsultOrderPreParams = Pick<PartialConsult, 'type' | 'illnessType'>
+
+
+// 问诊订单预⽀付信息
+export type ConsultOrderPreData = {
+value: ConsultOrderPreData
+    // 积分抵扣
+    pointDeduction: number
+    // 优惠券抵扣
+    couponDeduction: number
+    // 优惠券ID
+    couponId: string
+    // 需付款
+    payment: number
+    // 实付款
+    actualPayment: number
+}

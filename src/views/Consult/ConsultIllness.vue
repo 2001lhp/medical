@@ -1,9 +1,15 @@
 <script setup lang='ts'>
 import { uploadImage } from '@/services/home';
-import type { ConsultIllness } from '@/types/consult'
+import type { ConsultIllness, Image } from '@/types/consult'
 import type { UploaderAfterRead, UploaderFileListItem } from 'vant/lib/uploader/types'
 import { IllnessTime } from '@/enums';
 import { ref, computed } from 'vue'
+import { useConsult } from '@/stores/consult'
+import { showConfirmDialog, showToast } from 'vant';
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter()
+const route = useRoute()
+const store = useConsult()
 const timeOptions = [
     { label: '⼀周内', value: IllnessTime.Week },
     { label: '⼀⽉内', value: IllnessTime.Month },
@@ -21,7 +27,7 @@ const form = ref<ConsultIllness>({
     consultFlag: undefined,
     pictures: []
 })
-const fileList = ref([])
+const fileList = ref<Image[]>([])
 
 const onAfterRead: UploaderAfterRead = (item) => {
     if (Array.isArray(item)) return
@@ -48,6 +54,31 @@ const disabled = computed(() =>
     form.value.illnessTime === undefined ||
     form.value.consultFlag === undefined
 )
+const next = () => {
+    if (!form.value.illnessDesc) return showToast('请输⼊病情描述')
+    if (form.value.illnessTime === undefined) return showToast('请选择症状持续时间')
+    if (form.value.consultFlag === undefined) return showToast('请选择是否已经就诊')
+    store.setIllness(form.value)
+    // 跳转档案管理，需要根据 isChange 实现选择功能
+    router.push('/patient?isChange=1')
+}
+const back = () => {
+    if (store.consult.illnessDesc) {
+        showConfirmDialog({
+            title: '温馨提示',
+            message: '是否恢复您之前填写的病情信息呢？',
+            confirmButtonColor: 'var(--cp-primary)',
+            closeOnPopstate: false
+        }).then(() => {
+            // 确认
+            const { illnessDesc, illnessTime, consultFlag, pictures } = store.consult
+            form.value = { illnessDesc, illnessTime, consultFlag, pictures }
+            // 图⽚回显
+            fileList.value = pictures || []
+        })
+    }
+}
+back()
 </script>
 <template>
     <div class='illness'>
@@ -73,14 +104,15 @@ const disabled = computed(() =>
         </div>
         <div class="img"><van-uploader :after-read="onAfterRead" @delete="onDeleteImg" v-model="fileList" max-count="9"
                 :max-size="5 * 1024 * 1024" upload-icon="photo-o" upload-text="上传图⽚"></van-uploader>
-            <p class="tip">上传内容仅医⽣可⻅,最多9张图,最⼤5MB</p>
+            <p class="tip" v-show="fileList.length == 0">上传内容仅医⽣可⻅,最多9张图,最⼤5MB</p>
         </div>
-        <van-button :class="{ disabled }" type="primary" block round>下一步</van-button>
+        <van-button :class="{ disabled }" type="primary" block round @click="next">下一步</van-button>
     </div>
 </template>
 <style lang='scss' scoped>
 .illness {
     padding-top: 46px;
+    box-sizing: border-box;
 
     .tip {
         display: flex;
@@ -145,11 +177,11 @@ const disabled = computed(() =>
     }
 
     .img {
-        padding-top: 16px;
+        // padding-top: 16px;
         margin-bottom: 40px;
         display: flex;
         align-items: center;
-        padding-left: 15px;
+        padding: 15px;
 
         .tip {
             font-size: 12px;
@@ -190,8 +222,11 @@ const disabled = computed(() =>
     }
 
     .van-button {
+        width: calc(100% - 30px);
         font-size: 16px;
         margin-bottom: 30px;
+        margin: auto;
+        /* margin: 15px; */
 
         &.disabled {
             opacity: 1;

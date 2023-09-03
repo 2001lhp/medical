@@ -4,6 +4,11 @@ import Validator from 'id-validator'
 import { ref, reactive, computed } from 'vue'
 import type { Patient } from '@/types/user';
 import { showToast, showConfirmDialog } from 'vant';
+import { useConsult } from '@/stores/consult';
+import { useRouter, useRoute } from 'vue-router';
+const router = useRouter()
+const route = useRoute()
+const store = useConsult()
 const list = ref<Patient[]>()
 const showRight = ref(false)
 const getList = async () => {
@@ -62,12 +67,23 @@ const del = async () => {
     showRight.value = false
     showToast('删除成功')
 }
+const id = ref()
+const next = async () => {
+    if (!id.value) return showToast('请选就诊择患者')
+    store.setPatient(id.value)
+    router.push('/pay')
+}
 </script>
 <template>
     <div class='patient'>
-        <nav-bar title="家庭档案" text="" />
+        <nav-bar :title="$route.query.isChange ? '选择患者' : '家庭档案'" text="" />
+        <div class="patient-header" v-if="$route.query.isChange">
+            <h3>请选择患者信息</h3>
+            <p>以便医⽣给出更准确的治疗，信息仅医⽣可⻅</p>
+        </div>
         <div class="patient-list">
-            <div class="patient-item" v-for="item in list" :key="item.id">
+            <div class="patient-item" v-for="item in list" :key="item.id" @click="id = item.id"
+                :class="{ selected: id === item.id }">
                 <div class="info">
                     <span class="name">{{ item.name }}</span>
                     <span class="id">{{ item.idCard.replace(/^(.{3})(?:\d+)(.{4})$/, '\$1***********\$2') }}</span>
@@ -83,6 +99,10 @@ const del = async () => {
             </div>
             <div class="tip">最多可添加 6 ⼈</div>
         </div>
+        <van-action-bar>
+            <van-action-bar-button type="primary" style="margin: 15px;" text="下⼀步"
+                @click="next" />
+        </van-action-bar>
         <van-popup v-model:show="showRight" position="right" :style="{ width: '100%', height: '100%' }">
             <nav-bar :back="() => showRight = false" :title="patient.id ? '编辑患者' : '添加患者'" text="保存"
                 @right="submit"></nav-bar>
@@ -109,6 +129,19 @@ const del = async () => {
 <style lang='scss' scoped>
 .patient {
     padding: 46px 0 80px;
+
+    &-header {
+        padding: 15px;
+
+        h3 {
+            font-weight: normal;
+            margin-bottom: 5px;
+        }
+
+        p {
+            color: var(--cp-text3);
+        }
+    }
 
     &-list {
         padding: 15px;

@@ -15,7 +15,8 @@
     --cp-price: #EB5757;
 }
 
-.login {
+// .login {}
+* {
     // 覆盖vant的主题色
     --van-button-primary-background: var(--cp-primary);
     --van-button-primary-border-color: var(--cp-primary);
