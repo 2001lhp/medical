@@ -115,7 +115,7 @@ export type ConsultOrderPreParams = Pick<PartialConsult, 'type' | 'illnessType'>
 
 // 问诊订单预⽀付信息
 export type ConsultOrderPreData = {
-value: ConsultOrderPreData
+    // value: ConsultOrderPreData
     // 积分抵扣
     pointDeduction: number
     // 优惠券抵扣
@@ -126,4 +126,49 @@ value: ConsultOrderPreData
     payment: number
     // 实付款
     actualPayment: number
+}
+
+export type ConsultOrderItem = Consult & {
+    // 创建时间
+    createTime: string
+    // 医⽣信息
+    docInfo?: Doctor
+    // 患者信息
+    patientInfo: Patient
+    // 订单编号
+    orderNo: string
+    // 订单状态
+    status: OrderType
+    // 状态⽂字
+    statusValue: string
+    // 类型问诊⽂字
+    typeValue: string
+    // 倒计时时间
+    countdown: number
+    // 处⽅ID
+    prescriptionId?: string
+    // 评价ID
+    evaluateId: number
+    // 应付款
+    payment: number
+    // 优惠券抵扣
+    couponDeduction: number
+    // 积分抵扣
+    pointDeduction: number
+    // 实付款
+    actualPayment: number
+}
+
+export type ConsultOrderPage = {
+    // 总⻚数
+    pageTotal: number
+    // 总条数
+    total: number
+    // 列表数据
+    rows: ConsultOrderItem[]
+}
+
+export type ConsultOrderListParams = PageParams & {
+    // 问诊记录类型
+    type: ConsultType
 }

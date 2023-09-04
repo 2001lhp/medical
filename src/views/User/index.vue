@@ -14,7 +14,7 @@ getUserInfo().then(res => {
     info.value = res.data
 })
 const tools = [
-    { name: '我的问诊', path: '', icon: 'user-tool-01', },
+    { name: '我的问诊', path: '/consult', icon: 'user-tool-01', },
     { name: '我的处⽅', path: '', icon: 'user-tool-02', },
     { name: '家庭档案', path: '/patient', icon: 'user-tool-03', },
     { name: '地址管理', path: '', icon: 'user-tool-04', },

@@ -1,9 +1,11 @@
 <script setup lang='ts'>
 import { ref } from 'vue'
-import { getPatientDetail, getConsultOrderPre, createConsultOrder } from '@/services/home'
+import { getPatientDetail, getConsultOrderPre, createConsultOrder, getConsultOrderPayUrl } from '@/services/home'
 import { useConsult } from '@/stores/consult';
 import type { ConsultOrderPreData } from '@/types/consult';
-import { showToast } from 'vant';
+import { showConfirmDialog, showDialog, showToast } from 'vant';
+import { onBeforeRouteLeave, useRouter } from 'vue-router'
+const router = useRouter()
 const store = useConsult()
 const checked = ref()
 const patient = ref()
@@ -16,7 +18,7 @@ const loadPatient = async () => {
     patient.value = res.data
 }
 loadPatient()
-const payInfo = ref<ConsultOrderPreData>({})
+const payInfo = ref<ConsultOrderPreData>()
 const loadData = async () => {
     const res = await getConsultOrderPre({
         type: store.consult.type,
@@ -40,6 +42,53 @@ const submit = async () => {
     // 打开
     show.value = true
 }
+const onClose = () => {
+    showConfirmDialog({
+        title: '关闭支付',
+        message: '取消支付将无法获得医生回复，医生接诊名额有限，是否确认关闭',
+        cancelButtonText: '仍要关闭',
+        confirmButtonText: '继续⽀付',
+        confirmButtonColor: 'var(--cp-primary)'
+    }).then(() => {
+        return false
+    }).catch(() => {
+        orderId.value = ''
+        router.push('/consult')
+        return true
+    });
+}
+onBeforeRouteLeave(() => {
+    if (orderId.value) return false
+})
+const pay = async () => {
+    // console.log(paymentMethod.value);
+    if (paymentMethod.value === undefined) return showToast('请选择⽀付⽅式')
+    const res = await getConsultOrderPayUrl({
+        orderId: orderId.value,
+        paymentMethod: paymentMethod.value,
+        payCallback: 'http://localhost:5173/room'
+    })
+    window.location.href = res.data.payUrl
+}
+const refresh = () => {
+    if (
+        !store.consult.type ||
+        !store.consult.illnessType ||
+        !store.consult.depId ||
+        !store.consult.patientId
+    ) {
+        return showDialog({
+            title: '温馨提示',
+            message: '问诊信息不完整请重新填写，如有未⽀付的问诊订单可在问诊记录中继续⽀付',
+            closeOnPopstate: false
+        }).then(() => {
+            router.push('/')
+        })
+    }
+    loadData()
+    loadPatient()
+}
+refresh()
 </script>
 <template>
     <div class='pay'>
@@ -62,12 +111,12 @@ const submit = async () => {
             <van-cell title="患者信息" :value="`${patient?.name} | ${patient?.genderValue} | ${patient?.age}岁`" />
             <van-cell title="病情描述" :label="store.consult.illnessDesc" />
         </van-cell-group>
-        <van-checkbox v-model="checked">我已同意<span>支付协议</span></van-checkbox>
-        <van-submit-bar button-type="primary" :price="payInfo?.actualPayment * 100" button-text="⽴即⽀付" text-align="left"
-            @click="submit" :loading="loading" />
-        <van-action-sheet v-model:show="show" title="标题">
+        <van-checkbox v-model="checked" class="check">我已同意<span>支付协议</span></van-checkbox>
+        <van-submit-bar v-if="payInfo?.actualPayment" button-type="primary" :price="payInfo?.actualPayment * 100"
+            button-text="⽴即⽀付" text-align="left" @click="submit" :loading="loading" />
+        <van-action-sheet v-model:show="show" title="标题" :closeable="false" :before-close="onClose">
             <div class="content">
-                <p class="amount">￥{{ payInfo.actualPayment.toFixed(2) }}</p>
+                <p class="amount">￥{{ payInfo?.actualPayment.toFixed(2) }}</p>
                 <van-cell-group>
                     <van-cell title="微信⽀付" @click="paymentMethod = 0">
                         <template #icon><svg-icon name="consult-wechat" /></template>
@@ -79,7 +128,7 @@ const submit = async () => {
                     </van-cell>
                 </van-cell-group>
                 <div class="btn">
-                    <van-button type="primary" round block>⽴即⽀付</van-button>
+                    <van-button type="primary" round block @click="pay">⽴即⽀付</van-button>
                 </div>
             </div>
         </van-action-sheet>
@@ -131,7 +180,7 @@ const submit = async () => {
         }
     }
 
-    .van-checkbox {
+    .check {
         height: 56px;
         justify-content: center;
 
