@@ -1,6 +1,8 @@
 import { ref } from 'vue'
-import { followDoctor } from '../services/home'
-import type { FollowType } from '../types/consult'
+import { cancelOrder, deleteOrder, followDoctor } from '../services/home'
+import type { ConsultOrderItem, FollowType } from '../types/consult'
+import { OrderType } from '@/enums'
+import { showToast } from 'vant'
 
 export const useFollow = (type: FollowType = 'doc') => {
     const loading = ref(false)
@@ -14,4 +16,40 @@ export const useFollow = (type: FollowType = 'doc') => {
         }
     }
     return { loading, follow }
+}
+
+export const useOrderAction = () => {
+
+    const loading = ref(false)
+    const cancelConsultOrder = (item: ConsultOrderItem) => {
+        loading.value = true
+        cancelOrder(item.id).then(() => {
+            item.status = OrderType.ConsultCancel
+            item.statusValue = '已取消'
+            showToast('取消成功')
+        }).catch(() => {
+            showToast('取消失败')
+        }).finally(() => {
+            loading.value = false
+        })
+    }
+    // 删除订单
+    const deleteLoading = ref(false)
+    const deleteConsultOrder = (item: ConsultOrderItem) => {
+        deleteLoading.value = true
+        deleteOrder(item.id).then(() => {
+            // emit('delete', item.id)
+            showToast('删除成功')
+        }).catch(() => {
+            showToast('删除失败')
+        }).finally(() => {
+            deleteLoading.value = false
+        })
+    }
+    return {
+        loading,
+        cancelConsultOrder,
+        deleteLoading,
+        deleteConsultOrder
+    }
 }

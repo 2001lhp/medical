@@ -1,5 +1,9 @@
 import request from '../utils/http'
-import type { KnowledgeParams, KnowledgePage, PageParams, DoctorPage, FollowType, TopDep, Image, ConsultOrderPreParams, ConsultOrderPreData, PartialConsult, ConsultOrderListParams, ConsultOrderPage } from '../types/consult.d'
+import type {
+    KnowledgeParams, KnowledgePage, PageParams, DoctorPage, FollowType, TopDep, Image,
+    ConsultOrderPreParams, ConsultOrderPreData, PartialConsult,
+    ConsultOrderListParams, ConsultOrderPage, ConsultOrderItem
+} from '../types/consult.d'
 import type { Patient } from '@/types/user'
 
 export const getKnowledgePage = (params: KnowledgeParams) => {
@@ -50,3 +54,11 @@ export const getConsultOrderList = (params: ConsultOrderListParams) => {
 export const cancelOrder = (id: string) => { return request(`/patient/order/cancel/${id}`, 'PUT') }
 
 export const deleteOrder = (id: string) => { return request(`/patient/order/${id}`, 'DELETE') }
+
+export const getOrderDetail = (orderId: string) => {
+    return request<ConsultOrderItem>('/patient/consult/order/detail', 'GET', { orderId })
+}
+
+export const getPrescriptionPic = (id: string | number) => {
+    return request<{ id: string; url: string }>(`patient/consult/prescription/${id}`, 'GET')
+}

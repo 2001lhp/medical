@@ -35,7 +35,7 @@ const submit = async () => {
     if (!checked.value) return showToast('请勾选我已同意⽀付协议')
     loading.value = true
     const res = await createConsultOrder(store.consult)
-    console.log(res);
+    // console.log(res);
     orderId.value = res.data.id
     loading.value = false
     store.clear()
@@ -60,16 +60,16 @@ const onClose = () => {
 onBeforeRouteLeave(() => {
     if (orderId.value) return false
 })
-const pay = async () => {
-    // console.log(paymentMethod.value);
-    if (paymentMethod.value === undefined) return showToast('请选择⽀付⽅式')
-    const res = await getConsultOrderPayUrl({
-        orderId: orderId.value,
-        paymentMethod: paymentMethod.value,
-        payCallback: 'http://localhost:5173/room'
-    })
-    window.location.href = res.data.payUrl
-}
+// const pay = async () => {
+//     // console.log(paymentMethod.value);
+//     if (paymentMethod.value === undefined) return showToast('请选择⽀付⽅式')
+//     const res = await getConsultOrderPayUrl({
+//         orderId: orderId.value,
+//         paymentMethod: paymentMethod.value,
+//         payCallback: 'http://localhost:5173/room'
+//     })
+//     window.location.href = res.data.payUrl
+// }
 const refresh = () => {
     if (
         !store.consult.type ||
@@ -114,7 +114,9 @@ refresh()
         <van-checkbox v-model="checked" class="check">我已同意<span>支付协议</span></van-checkbox>
         <van-submit-bar v-if="payInfo?.actualPayment" button-type="primary" :price="payInfo?.actualPayment * 100"
             button-text="⽴即⽀付" text-align="left" @click="submit" :loading="loading" />
-        <van-action-sheet v-model:show="show" title="标题" :closeable="false" :before-close="onClose">
+
+        <action-sheet :actualPayment="payInfo?.actualPayment" :show="show" :close="onClose" :orderId="orderId"/>
+        <!-- <van-action-sheet v-model:show="show" title="标题" :closeable="false" :before-close="onClose">
             <div class="content">
                 <p class="amount">￥{{ payInfo?.actualPayment.toFixed(2) }}</p>
                 <van-cell-group>
@@ -131,7 +133,7 @@ refresh()
                     <van-button type="primary" round block @click="pay">⽴即⽀付</van-button>
                 </div>
             </div>
-        </van-action-sheet>
+        </van-action-sheet> -->
     </div>
 </template>
 <style lang='scss' scoped>
@@ -203,30 +205,6 @@ refresh()
         }
     }
 
-    .content {
-        .amount {
-            padding: 20px;
-            text-align: center;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        .btn {
-            padding: 15px;
-        }
-
-        .van-cell {
-            align-items: center;
-
-            .icon {
-                margin-right: 10px;
-                font-size: 18px;
-            }
-
-            .van-checkbox :deep(.van-checkbox__icon) {
-                font-size: 16px;
-            }
-        }
-    }
+    
 }
 </style>

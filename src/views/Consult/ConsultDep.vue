@@ -8,7 +8,7 @@ const active = ref(0)
 const alldep = ref<TopDep[]>([])
 const getdata = async () => {
     const res = await getAllDep()
-    console.log(res);
+    // console.log(res);
     alldep.value = res.data
 }
 getdata()

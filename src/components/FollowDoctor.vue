@@ -7,7 +7,7 @@ import { useFollow } from '@/composable/index'
 const list = ref<Doctor[]>([])
 const getdata = async () => {
     let res = await getDoctorPage({ current: 1, pageSize: 5 })
-    console.log(res);
+    // console.log(res);
     list.value = res.data.rows
 }
 getdata()

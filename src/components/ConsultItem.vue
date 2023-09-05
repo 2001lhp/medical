@@ -2,13 +2,15 @@
 import type { ConsultOrderItem, } from '@/types/consult';
 import { OrderType } from '@/enums';
 import { ref, computed } from 'vue';
-import { cancelOrder, deleteOrder } from '@/services/home';
+// import { cancelOrder, deleteOrder } from '@/services/home';
 import { showToast } from 'vant';
+import useShowPrescription from '@/composable/prescription'
+import { useOrderAction } from '@/composable';
 const prop = defineProps<{
     item: ConsultOrderItem
 }>()
 const emit = defineEmits<{
-  (e: 'delete', id: number | string): void
+    (e: 'delete', id: number | string): void
 }>()
 const showPopover = ref(false)
 const actions = computed(() => [
@@ -16,43 +18,23 @@ const actions = computed(() => [
     { text: '删除订单' }
 ])
 const onSelect = (item: { text: string; disabled?: boolean }) => {
-    console.log(item)
+    // console.log(item)
 }
-const loading = ref(false)
-const cancelConsultOrder = (item: ConsultOrderItem) => {
-    loading.value = true
-    cancelOrder(item.id).then(() => {
-        item.status = OrderType.ConsultCancel
-        item.statusValue = '已取消'
-        showToast('取消成功')
-    }).catch(() => {
-        showToast('取消失败')
-    }).finally(() => {
-        loading.value = false
-    })
-}
-// 删除订单
-const deleteLoading = ref(false)
-const deleteConsultOrder = (item: ConsultOrderItem) => {
-    deleteLoading.value = true
-    deleteOrder(item.id).then(() => {
-        emit('delete', item.id)
-        showToast('删除成功')
-    }).catch(() => {
-        showToast('删除失败')
-    }).finally(() => {
-        deleteLoading.value = false
-    })
-}
+
+const { prescription } = useShowPrescription()
+const { loading, cancelConsultOrder, deleteLoading, deleteConsultOrder } = useOrderAction()
 </script>
 <template>
     <div class='item'>
         <div class="head van-hairline--bottom">
             <img class="img" src="@/assets/avatar-doctor.svg" />
             <p>{{ item.docInfo?.name }}</p>
-            <span>{{ item.statusValue }}</span>
+            <span :class="{
+                orange: item.status === OrderType.ConsultPay, green:
+                    item.status === OrderType.ConsultChat
+            }">{{ item.statusValue }}</span>
         </div>
-        <div class="body">
+        <div class="body" @click="$router.push(`/consult/${item.id}`)">
             <div class="body-row">
                 <div class="body-label">病情描述</div>
                 <div class="body-value">{{ item.illnessDesc }}</div>
@@ -77,7 +59,8 @@ const deleteConsultOrder = (item: ConsultOrderItem) => {
             <van-button type="primary" plain size="small" round :to="`/room?orderId=${item.id}`"> 继续沟通 </van-button>
         </div>
         <div class="foot" v-if="item.status === OrderType.ConsultChat">
-            <van-button v-if="item.prescriptionId" class="gray" plain size="small" round> 查看处⽅ </van-button>
+            <van-button v-if="item.prescriptionId" class="gray" plain size="small" round
+                @click="prescription(item.prescriptionId)"> 查看处⽅ </van-button>
             <van-button type="primary" plain size="small" round :to="`/room?orderId=${item.id}`"> 继续沟通 </van-button>
         </div>
         <div class="foot" v-if="item.status === OrderType.ConsultComplete">
@@ -92,7 +75,7 @@ const deleteConsultOrder = (item: ConsultOrderItem) => {
         </div>
         <div class="foot" v-if="item.status === OrderType.ConsultCancel">
             <van-button class="gray" plain size="small" round :loading="deleteLoading"
-                @click="deleteConsultOrder(item)">删除订单</van-button>
+                @click="deleteConsultOrder(item); $emit('delete', item.id)">删除订单</van-button>
             <van-button type="primary" plain size="small" round to="/">咨询其他医⽣</van-button>
         </div>
     </div>

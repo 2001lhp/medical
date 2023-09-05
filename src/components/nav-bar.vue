@@ -12,10 +12,18 @@ const onClickRight = () => {
     emit('right')
 }
 const onClickLeft = () => {
+    // if (prop.back) {
+    //     prop.back()
+    // } else {
+    //     router.back()
+    // }
     if (prop.back) {
-        prop.back()
-    } else {
+        return prop.back()
+    }
+    if (history.state?.back) {
         router.back()
+    } else {
+        router.push('/')
     }
 }
 </script>

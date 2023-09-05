@@ -35,3 +35,9 @@ export enum OrderType {
     /** 取消订单 */
     MedicineCancel = 14
 }
+
+
+export enum ConsultFlag {
+    isFlag = 1,
+    noFlag = 0
+}
