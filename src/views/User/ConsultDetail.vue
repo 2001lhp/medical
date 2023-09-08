@@ -121,7 +121,7 @@ const onClose = () => {
                 @click="deleteConsultOrder(info); $router.back()">删除订单</van-button>
             <van-button type="primary" round to="/">咨询其他医生</van-button>
         </div>
-        <action-sheet :actualPayment="info?.actualPayment" :show="show" :close="onClose" :orderId="orderId"/>
+        <action-sheet payCallback="room" :actualPayment="info?.actualPayment" :show="show" :close="onClose" :orderId="orderId"/>
     </div>
 
     <div v-else>

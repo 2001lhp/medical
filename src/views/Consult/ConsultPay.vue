@@ -115,7 +115,8 @@ refresh()
         <van-submit-bar v-if="payInfo?.actualPayment" button-type="primary" :price="payInfo?.actualPayment * 100"
             button-text="⽴即⽀付" text-align="left" @click="submit" :loading="loading" />
 
-        <action-sheet :actualPayment="payInfo?.actualPayment" :show="show" :close="onClose" :orderId="orderId"/>
+        <action-sheet payCallback="room" :actualPayment="payInfo?.actualPayment" :show="show" :close="onClose"
+            :orderId="orderId" />
         <!-- <van-action-sheet v-model:show="show" title="标题" :closeable="false" :before-close="onClose">
             <div class="content">
                 <p class="amount">￥{{ payInfo?.actualPayment.toFixed(2) }}</p>
@@ -205,6 +206,6 @@ refresh()
         }
     }
 
-    
+
 }
 </style>
